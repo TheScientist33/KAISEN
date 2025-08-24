@@ -1,0 +1,35 @@
+{
+    "name": "kaisen",
+    "short_name": "kaisen",
+    "start_url": ".",
+    "display": "standalone",
+    "background_color": "#0175C2",
+    "theme_color": "#0175C2",
+    "description": "Projet d’application mobile pour la rééducation à domicile, utilisant l’intelligence artificielle (IA) pour aider les patients à réaliser leurs exercices correctement. En tant que kinésithérapeute, j’ai constaté que beaucoup de patients manquent leurs séances à domicile par manque de suivi. Cette application vise à combler ce vide grâce à l’analyse de mouvements en temps réel, des retours vocaux/visuels, et un suivi de la douleur. Elle inclut des fonctionnalités avancées comme la location d’écrans géants, une adaptation pour la gériatrie et la rééducation cardio-respiratoire, et l’automatisation de sessions de groupe en hôpital. Le modèle économique repose sur un abonnement, avec un objectif de remboursement par la Sécurité sociale française via le programme PECAN. L’objectif est de créer un MVP (Produit Minimum Viable) en 3-6 mois, avec un budget de 20-50k, scalable pour un déploiement national.",
+    "orientation": "portrait-primary",
+    "prefer_related_applications": false,
+    "icons": [
+        {
+            "src": "icons/Icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "icons/Icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        },
+        {
+            "src": "icons/Icon-maskable-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "maskable"
+        },
+        {
+            "src": "icons/Icon-maskable-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable"
+        }
+    ]
+}

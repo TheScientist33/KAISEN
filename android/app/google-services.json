@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1063376164798",
+    "project_id": "kaisen-314",
+    "storage_bucket": "kaisen-314.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1063376164798:android:eee688df90e053b9304bef",
+        "android_client_info": {
+          "package_name": "com.example.kaisen"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC1o1Fiy_UkKq5NWttbMfFmIPASHYwLics"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

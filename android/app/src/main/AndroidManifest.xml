@@ -1,0 +1,69 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- ===== Permissions globales ===== -->
+    <!-- Caméra -->
+    <uses-permission android:name="android.permission.CAMERA"/>
+
+    <!-- Localisation (requis par BLE sur Android <= 11, et parfois utile pour la découverte) -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+
+    <!-- BLE (Android 12+) -->
+    <uses-permission android:name="android.permission.BLUETOOTH"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT"/>
+
+    <!-- (Optionnel) Si tu fais de l’advertising BLE :
+    <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE"/> -->
+
+    <!-- ===== Uses-feature pour optimiser le Play Store & activer l’autofocus ===== -->
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+    <uses-feature android:name="android.hardware.bluetooth_le" android:required="false"/>
+
+    <application
+        android:label="kaisen"
+        android:name="${applicationName}"
+        android:icon="@mipmap/ic_launcher">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:taskAffinity=""
+            android:theme="@style/LaunchTheme"
+            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
+            android:hardwareAccelerated="true"
+            android:windowSoftInputMode="adjustResize">
+
+            <!-- Thème de pré-lancement -->
+            <meta-data
+                android:name="io.flutter.embedding.android.NormalTheme"
+                android:resource="@style/NormalTheme" />
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+
+        <!-- Ne pas supprimer : enregistrement auto des plugins -->
+        <meta-data
+            android:name="flutterEmbedding"
+            android:value="2" />
+
+        <!-- (Firebase) Si tu ajoutes Crashlytics/Analytics, le plugin Google Services utilisera aussi ces meta-data -->
+        <!-- Rien d'autre à ajouter ici pour Firestore, pense surtout aux fichiers Gradle plus bas. -->
+    </application>
+
+    <!-- Package visibility : déjà présent pour PROCESS_TEXT -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.PROCESS_TEXT"/>
+            <data android:mimeType="text/plain"/>
+        </intent>
+
+        <!-- (Optionnel) Autoriser la découverte d’apps BLE spécifiques -->
+        <!-- Pas nécessaire dans la majorité des cas avec flutter_blue_plus -->
+    </queries>
+</manifest>

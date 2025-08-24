@@ -1,6 +1,8 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../screens/camera_pose_page.dart';
+
 
 /// ---------- Palette ----------
 class KzColors {
@@ -148,7 +150,11 @@ class ExercisesPage extends StatelessWidget {
           const SizedBox(height: 12),
           _PrimaryButton(
             label: 'Démarrer la caméra IA',
-            onPressed: () {}, // TODO: brancher MediaPipe
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const CameraPosePage()),
+                );
+              },
           ),
         ],
       ),

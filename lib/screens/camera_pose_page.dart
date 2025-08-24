@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:google_mlkit_pose_detection/google_mlkit_pose_detection.dart';
+import 'package:google_mlkit_commons/google_mlkit_commons.dart';
 
 class CameraPosePage extends StatefulWidget {
   const CameraPosePage({super.key});
@@ -169,34 +170,31 @@ class _CameraPosePageState extends State<CameraPosePage> {
 
 /// Convertit le frame CameraImage -> InputImage pour MLKit (Android/iOS)
 InputImage _toInputImage(CameraImage image, CameraDescription description) {
-  final bytes = WriteBuffer();
+  final WriteBuffer allBytes = WriteBuffer();
   for (final Plane plane in image.planes) {
-    bytes.putUint8List(plane.bytes);
+    allBytes.putUint8List(plane.bytes);
   }
-  final bytesAll = bytes.done().buffer.asUint8List();
+  final bytes = allBytes.done().buffer.asUint8List();
 
   final Size imageSize = Size(image.width.toDouble(), image.height.toDouble());
-  final camera = description;
-  final rotation = _rotationFromCamera(camera.sensorOrientation);
-  final format = InputImageFormatValue.fromRawValue(image.format.raw) ?? InputImageFormat.nv21;
 
-  final planeData = image.planes.map(
-        (Plane plane) => InputImagePlaneMetadata(
-      bytesPerRow: plane.bytesPerRow,
-      height: plane.height,
-      width: plane.width,
-    ),
-  ).toList();
+  final InputImageRotation rotation =
+      InputImageRotationValue.fromRawValue(description.sensorOrientation)
+          ?? InputImageRotation.rotation0deg;
 
+  final InputImageFormat format =
+      InputImageFormatValue.fromRawValue(image.format.raw)
+          ?? InputImageFormat.nv21;
+
+  // ✅ Dans cette version, on ne passe PAS planeData : juste bytesPerRow
   final metadata = InputImageMetadata(
     size: imageSize,
     rotation: rotation,
     format: format,
-    bytesPerRow: planeData.first.bytesPerRow,
-    planeData: planeData,
+    bytesPerRow: image.planes.first.bytesPerRow,
   );
 
-  return InputImage.fromBytes(bytes: bytesAll, metadata: metadata);
+  return InputImage.fromBytes(bytes: bytes, metadata: metadata);
 }
 
 InputImageRotation _rotationFromCamera(int sensorOrientation) {

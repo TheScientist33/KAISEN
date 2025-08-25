@@ -73,8 +73,68 @@ class _NavShellState extends State<NavShell> {
 }
 
 // ---------- Pages ----------
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+  @override State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  bool _asked = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_asked) {
+      _asked = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) => _askCamSheet());
+    }
+  }
+
+  Future<void> _askCamSheet() async {
+    if (!mounted) return;
+    showModalBottomSheet(
+      context: context,
+      showDragHandle: true,
+      builder: (_) => Padding(
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text("Pour bien vous guider, autorisez la caméra.",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text("Plus tard"),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      Navigator.pop(context);
+                      final ok = await PosePreloader.instance.requestCameraWarmup();
+                      if (!mounted) return;
+                      final msg = ok ? "Caméra autorisée ✅" : "Caméra refusée ❌";
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(msg))
+                      );
+                    },
+                    child: const Text("Autoriser"),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(

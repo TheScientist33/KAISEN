@@ -10,6 +10,14 @@
 
   <link rel="manifest" href="manifest.json" />
   <script defer src="flutter.js"></script>
+  <script>
+  window.addEventListener('load', function () {
+    _flutter.loader
+      .load({})                          // ✅ au lieu de loadEntrypoint
+      .then(engine => engine.initializeEngine())
+      .then(app => app.runApp());
+  });
+</script>
 </head>
 <body>
 <script>

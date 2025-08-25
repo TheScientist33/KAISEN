@@ -1,7 +1,7 @@
 // lib/web_pose_view.dart
-// ignore_for_file: avoid_web_libraries_in_flutter
 import 'dart:html' as html;
-import 'package:flutter_web_plugins/flutter_web_plugins.dart' as web;
+import 'dart:ui_web' as ui_web; // ✅ API web officielle
+//import 'package:flutter_web_plugins/flutter_web_plugins.dart' as web;
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
@@ -30,7 +30,10 @@ class _WebPoseViewState extends State<WebPoseView> {
       ..allow = 'camera; microphone'
       ..allowFullscreen = true;
 
-    web.registerViewFactory(_viewType, (int _) => _iframe);
+    ui_web.platformViewRegistry.registerViewFactory(
+           _viewType,
+           (int _) => _iframe,
+         );
 
     html.window.onMessage.listen((event) async {
       final data = event.data;

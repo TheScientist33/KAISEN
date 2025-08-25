@@ -1,40 +1,23 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
-  <!--
-    If you are serving your web app in a path other than the root, change the
-    href value below to reflect the base path you are serving from.
-
-    The path provided below has to start and end with a slash "/" in order for
-    it to work correctly.
-
-    For more details:
-    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
-
-    This is a placeholder for base href that will be replaced by the value of
-    the `--base-href` argument provided to `flutter build`.
-  -->
-  <base href="$FLUTTER_BASE_HREF">
-
-  <meta charset="UTF-8">
-  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="Projet d’application mobile pour la rééducation à domicile, utilisant l’intelligence artificielle (IA) pour aider les patients à réaliser leurs exercices correctement. En tant que kinésithérapeute, j’ai constaté que beaucoup de patients manquent leurs séances à domicile par manque de suivi. Cette application vise à combler ce vide grâce à l’analyse de mouvements en temps réel, des retours vocaux/visuels, et un suivi de la douleur. Elle inclut des fonctionnalités avancées comme la location d’écrans géants, une adaptation pour la gériatrie et la rééducation cardio-respiratoire, et l’automatisation de sessions de groupe en hôpital. Le modèle économique repose sur un abonnement, avec un objectif de remboursement par la Sécurité sociale française via le programme PECAN. L’objectif est de créer un MVP (Produit Minimum Viable) en 3-6 mois, avec un budget de 20-50k, scalable pour un déploiement national.">
-
-  <!-- iOS meta tags & icons -->
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="kaisen">
-  <link rel="apple-touch-icon" href="icons/Icon-192.png">
-
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" href="favicon.png"/>
-
-  <title>kaisen</title>
-  <link rel="manifest" href="manifest.json">
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KAISEN</title>
+  <base href="/" />
+  <link rel="manifest" href="manifest.json" />
+  <script defer src="flutter.js"></script>
 </head>
-<script type="module" src="pose.js"></script>
-
 <body>
-  <script src="flutter_bootstrap.js" async></script>
+<script>
+    window.addEventListener('load', function () {
+      _flutter.loader.loadEntrypoint({}).then(function (engineInitializer) {
+        return engineInitializer.initializeEngine();
+      }).then(function (appRunner) {
+        return appRunner.runApp();
+      });
+    });
+  </script>
 </body>
 </html>

@@ -33,13 +33,15 @@ dependencies:
   google_fonts: ^6.2.1
 
   # Caméra en temps réel
-  camera: ^0.11.2
+  camera: ^0.11.2   # mobile (web: non utilisé ici, l’iframe gère la cam)
 
   # Détection de pose
-  google_mlkit_pose_detection: ^0.14.0
+  google_mlkit_pose_detection: ^0.14.0 # Android/iOS
+
+  permission_handler: ^12.0.1
 
   # Synthèse vocale
-  flutter_tts: ^4.2.3
+  flutter_tts: ^4.2.3 # TTS mobile + Web
 
   # Connexion Bluetooth Low Energy (BLE)
   flutter_blue_plus: ^1.35.5
@@ -70,7 +72,6 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
-
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.

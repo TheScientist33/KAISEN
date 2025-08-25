@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>KAISEN Pose Web</title>
+    <style>
+    html,body{margin:0;height:100%;background:#0b0e13;color:#fff}
+    #view{position:relative;height:100vh}
+    video,canvas{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+    #hud{position:absolute;left:12px;top:12px;background:rgba(0,0,0,.4);
+         padding:8px 10px;border-radius:8px;font:500 14px system-ui,sans-serif}
+  </style>
+    <!-- Module JS -->
+    <script type="module" src="pose.js"></script>
+    <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      // lance la détection dans le conteneur #view
+      setTimeout(() => window.KaisenPose?.start('view'), 0);
+    });
+  </script>
+</head>
+<body>
+<div id="view">
+    <video id="video" playsinline autoplay muted></video>
+    <canvas id="canvas"></canvas>
+    <div id="hud">Init…</div>
+</div>
+</body>
+</html>

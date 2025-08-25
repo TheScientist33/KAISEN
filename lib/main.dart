@@ -3,7 +3,6 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
-
 import 'ui/splash_screen.dart'; // 👈 notre splash zen
 
 Future<void> main() async {
@@ -28,7 +27,7 @@ class KaisenApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
         textTheme: GoogleFonts.interTextTheme(),
       ),
-      home: const SplashScreen(), // 👈 démarre par le splash
+      home: const SplashScreen(), // ✅ juste le splash ici
     );
   }
 }

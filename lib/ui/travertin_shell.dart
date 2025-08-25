@@ -1,20 +1,18 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../screens/camera_pose_page.dart';
-import '../screens/pose_page.dart'; // export conditionnel web/mobile
+import '../pose_launcher.dart';
 
-
-/// ---------- Palette ----------
+// ---------- Palette ----------
 class KzColors {
-  static const beige = Color(0xFFF5F3EF);   // fond travertin
-  static const sage  = Color(0xFFC8D3C0);   // accent vert sauge
-  static const glacier = Color(0xFFD6E4EC); // accent bleu glacier (option)
-  static const text = Color(0xFF333333);    // gris anthracite doux
-  static const card = Colors.white;         // cartes
+  static const beige = Color(0xFFF5F3EF);
+  static const sage  = Color(0xFFC8D3C0);
+  static const glacier = Color(0xFFD6E4EC);
+  static const text = Color(0xFF333333);
+  static const card = Colors.white;
 }
 
-/// ---------- Shell principal ----------
+// ---------- Shell principal ----------
 class NavShell extends StatefulWidget {
   const NavShell({super.key});
   @override
@@ -22,9 +20,9 @@ class NavShell extends StatefulWidget {
 }
 
 class _NavShellState extends State<NavShell> {
+  Future<void> _openPose() => openPose(context); // délègue au launcher
   int _index = 0;
-
-  final _pages = const [
+  late final List<Widget> _pages = const [
     HomePage(),
     ExercisesPage(),
     TrackingPage(),
@@ -35,7 +33,6 @@ class _NavShellState extends State<NavShell> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Fond travertin peint (pas d’asset requis)
       body: CustomPaint(
         painter: TravertinPainter(seed: 42),
         child: SafeArea(child: _pages[_index]),
@@ -75,7 +72,7 @@ class _NavShellState extends State<NavShell> {
   }
 }
 
-/// ---------- Pages ----------
+// ---------- Pages ----------
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
   @override
@@ -86,12 +83,13 @@ class HomePage extends StatelessWidget {
         Expanded(
           child: ListView(
             padding: const EdgeInsets.only(bottom: 16),
-            children: const [
+            children: [
               ZenCard(
                 icon: Icons.fitness_center_rounded,
                 title: 'Exercices',
                 subtitle: 'Caméra IA, corrections en direct',
                 accent: KzColors.sage,
+                onTap: () => openPose(context), // ← ouvre la vue pose
               ),
               ZenCard(
                 icon: Icons.insights_rounded,
@@ -151,11 +149,7 @@ class ExercisesPage extends StatelessWidget {
           const SizedBox(height: 12),
           _PrimaryButton(
             label: 'Démarrer la caméra IA',
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const CameraPosePage()),
-                );
-              },
+            onPressed: () => openPose(context), // même bouton pour Web/Mobile
           ),
         ],
       ),
@@ -213,7 +207,7 @@ class ProfilePage extends StatelessWidget {
   }
 }
 
-/// ---------- Composants ----------
+// ---------- Composants ----------
 class _ZenAppBar extends StatelessWidget {
   final String title;
   const _ZenAppBar({required this.title});
@@ -221,8 +215,10 @@ class _ZenAppBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(20),
-      child: Text(title,
-          style: GoogleFonts.inter(fontSize: 22, fontWeight: FontWeight.w600, color: KzColors.text)),
+      child: Text(
+        title,
+        style: GoogleFonts.inter(fontSize: 22, fontWeight: FontWeight.w600, color: KzColors.text),
+      ),
     );
   }
 }
@@ -247,13 +243,14 @@ class ZenCard extends StatelessWidget {
   final String title;
   final String? subtitle;
   final Color accent;
-  const ZenCard({super.key, required this.icon, required this.title, this.subtitle, required this.accent});
+  final VoidCallback? onTap; // autoriser onTap dans ZenCard
+  const ZenCard({super.key, required this.icon, required this.title, this.subtitle, required this.accent, this.onTap});
   @override
   Widget build(BuildContext context) {
     return Card(
       child: InkWell(
         borderRadius: BorderRadius.circular(18),
-        onTap: () {},
+        onTap: onTap, // utilisation du callback
         child: Padding(
           padding: const EdgeInsets.all(18),
           child: Row(
@@ -270,7 +267,8 @@ class ZenCard extends StatelessWidget {
               Expanded(
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Text(title, style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w600)),
-                  if (subtitle != null) Text(subtitle!, style: GoogleFonts.inter(fontSize: 13, color: Colors.black54)),
+                  if (subtitle != null)
+                    Text(subtitle!, style: GoogleFonts.inter(fontSize: 13, color: Colors.black54)),
                 ]),
               ),
               const Icon(Icons.chevron_right_rounded, color: Colors.black38),
@@ -293,7 +291,9 @@ class _ListTileZen extends StatelessWidget {
       child: ListTile(
         leading: Icon(icon, color: KzColors.text),
         title: Text(title, style: GoogleFonts.inter(fontWeight: FontWeight.w600)),
-        subtitle: subtitle != null ? Text(subtitle!, style: GoogleFonts.inter(fontSize: 13, color: Colors.black54)) : null,
+        subtitle: subtitle != null
+            ? Text(subtitle!, style: GoogleFonts.inter(fontSize: 13, color: Colors.black54))
+            : null,
       ),
     );
   }
@@ -303,39 +303,43 @@ class _PrimaryButton extends StatelessWidget {
   final String label;
   final VoidCallback onPressed;
   const _PrimaryButton({required this.label, required this.onPressed});
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       height: 52,
+      width: double.infinity, // optionnel: bouton pleine largeur
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           backgroundColor: KzColors.sage,
           foregroundColor: KzColors.text,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         ),
-        onPressed: onPressed,
-        child: Text(label, style: GoogleFonts.inter(fontWeight: FontWeight.w600)),
+        onPressed: onPressed, // ✅ on garde le callback passé
+        child: Text(
+          label,
+          style: GoogleFonts.inter(fontWeight: FontWeight.w600),
+        ),
       ),
     );
   }
 }
 
-/// ---------- Fond Travertin ----------
+// ---------- Fond Travertin ----------
 class TravertinPainter extends CustomPainter {
   final int seed;
   TravertinPainter({this.seed = 0});
   @override
   void paint(Canvas canvas, Size size) {
     final rect = Offset.zero & size;
-    final gradient = LinearGradient(
+    final gradient = const LinearGradient(
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
-      colors: [KzColors.beige, Colors.white.withOpacity(0.9)],
+      colors: [KzColors.beige, Colors.white],
     );
     canvas.drawRect(rect, Paint()..shader = gradient.createShader(rect));
 
     final r = Random(seed);
-    // petites mouchetures
     for (int i = 0; i < 150; i++) {
       final dx = r.nextDouble() * size.width;
       final dy = r.nextDouble() * size.height;

@@ -1,11 +1,10 @@
-import 'dart:async';
 import 'dart:html' as html;
 
 class PosePreloader {
   static final instance = PosePreloader._();
   PosePreloader._();
 
-  html.IFrameElement? _iframe;
+  html.IFrameElement? _iframe; // pour précharger le modèle seulement
 
   Future<void> preload() async {
     if (_iframe != null) return;
@@ -18,21 +17,21 @@ class PosePreloader {
       ..style.left = '-9999px'
       ..style.top = '-9999px'
       ..allow = 'camera; microphone';
+    html.document.body?.append(_iframe!);
   }
 
+  // ✅ Appelé dans onPressed du bouton/modal → geste utilisateur garanti
   Future<bool> requestCameraWarmup() async {
-    await preload();
-    final c = Completer<bool>();
-    late html.EventListener sub;
-    sub = (e) {
-      final data = (e as html.MessageEvent).data;
-      if (data is Map && data['type'] == 'CAM_PERMISSION_RESULT') {
-        html.window.removeEventListener('message', sub);
-        c.complete(data['granted'] == true);
+    try {
+      final stream = await html.window.navigator.mediaDevices!
+          .getUserMedia({'video': true, 'audio': false});
+      // On libère tout de suite
+      for (final t in stream.getTracks()) {
+        t.stop();
       }
-    };
-    html.window.addEventListener('message', sub);
-    _iframe?.contentWindow?.postMessage({'type': 'WARMUP_CAMERA'}, '*');
-    return c.future.timeout(const Duration(seconds: 15), onTimeout: () => false);
+      return true;
+    } catch (_) {
+      return false;
+    }
   }
 }

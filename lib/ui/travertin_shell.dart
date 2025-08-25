@@ -246,16 +246,238 @@ class TrackingPage extends StatelessWidget {
   }
 }
 
-class BreathingPage extends StatelessWidget {
+class BreathingPage extends StatefulWidget {
   const BreathingPage({super.key});
   @override
-  Widget build(BuildContext context) {
-    return const _SimplePage(
-      title: 'Respiration',
-      child: Text('Timers guidés & spiromètre BLE (à intégrer)'),
+  State<BreathingPage> createState() => _BreathingPageState();
+}
+
+class _BreathingPageState extends State<BreathingPage> {
+  bool bleConnected = false;
+  bool running = false;
+  Duration elapsed = Duration.zero;
+  late final _Ticker _ticker;
+
+  @override
+  void initState() {
+    super.initState();
+    _ticker = _Ticker((d) {
+      if (!running) return;
+      setState(() => elapsed = d);
+    });
+  }
+
+  @override
+  void dispose() {
+    _ticker.dispose();
+    super.dispose();
+  }
+
+  void _toggleRun() {
+    setState(() {
+      running = !running;
+      if (running) {
+        elapsed = Duration.zero;
+        _ticker.start();
+      } else {
+        _ticker.stop();
+      }
+    });
+  }
+
+  void _pause() {
+    setState(() {
+      running = false;
+      _ticker.stop();
+    });
+  }
+
+  void _stop() {
+    setState(() {
+      running = false;
+      elapsed = Duration.zero;
+      _ticker.stop();
+    });
+  }
+
+  Future<void> _connectBle() async {
+    // TODO: intégrer flutter_blue_plus (scan/connexion au spiromètre)
+    setState(() => bleConnected = !bleConnected);
+  }
+
+  Future<void> _testMeasure() async {
+    // TODO: lecture d'une caractéristique (PEF/FEV1) + affichage valeur
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(bleConnected
+          ? 'Mesure test déclenchée (placeholder).'
+          : 'Connectez le spiromètre d\'abord.')),
     );
   }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: const [
+        _ZenAppBar(title: 'Respiration'),
+      ],
+      // On garde ton shell et on remplit le contenu ci‑dessous
+    ).copyWithBelow(
+      // Contenu scrollable
+      Expanded(
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+          children: [
+            // Sous-titre (comme dans ta capture)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: Text(
+                'Ex: 5s expiration • 3s pause • 5 cycles',
+                style: GoogleFonts.inter(fontSize: 12, color: Colors.black54),
+              ),
+            ),
+
+            // Guide visuel respiration
+            AspectRatio(
+              aspectRatio:  36 / 9,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: KzColors.glacier.withOpacity(0.25),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Center(
+                  child: Text('(Guide visuel respiration)',
+                      style: GoogleFonts.inter(color: Colors.black54)),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // Bloc Spiromètre BLE
+            Card(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: _BleRow(),
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // Chrono
+            Center(
+              child: Text(
+                _fmt(elapsed),
+                style: GoogleFonts.inter(
+                    fontSize: 24, fontWeight: FontWeight.w600, letterSpacing: 1.0),
+              ),
+            ),
+            const SizedBox(height: 12),
+
+            // Barre d'actions
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: KzColors.sage,
+                      foregroundColor: KzColors.text,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                    onPressed: _toggleRun,
+                    icon: const Icon(Icons.timer_outlined),
+                    label: Text(running ? 'Recommencer' : 'Lancer',
+                        style: GoogleFonts.inter(fontWeight: FontWeight.w600)),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: _pause,
+                    style: OutlinedButton.styleFrom(
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                    child: Text('Pause', style: GoogleFonts.inter()),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: _stop,
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                    child: Text('Terminer', style: GoogleFonts.inter(fontWeight: FontWeight.w600)),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // --- widgets internes ------------------------------------------------------
+
+  Widget _BleRow() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text('Spiromètre BLE',
+              style: GoogleFonts.inter(fontWeight: FontWeight.w600, fontSize: 16)),
+          const SizedBox(height: 6),
+          Text('État: ${bleConnected ? 'Connecté' : 'Non connecté'}',
+              style: GoogleFonts.inter(fontSize: 12, color: Colors.black54)),
+        ]),
+        Wrap(spacing: 8, children: [
+          OutlinedButton(
+            onPressed: _connectBle,
+            child: Text(bleConnected ? 'Déconnecter' : 'Connecter'),
+          ),
+          TextButton(onPressed: _testMeasure, child: const Text('Tester mesure')),
+        ]),
+      ],
+    );
+  }
+
+  String _fmt(Duration d) {
+    final mm = d.inMinutes.remainder(60).toString().padLeft(2, '0');
+    final ss = d.inSeconds.remainder(60).toString().padLeft(2, '0');
+    return '$mm:$ss';
+  }
 }
+
+// Petit ticker minimaliste pour le chrono (évite d'ajouter une dépendance)
+class _Ticker {
+  _Ticker(this.onTick);
+  final void Function(Duration) onTick;
+  bool _running = false;
+  DateTime? _start;
+
+  void start() {
+    if (_running) return;
+    _running = true;
+    _start = DateTime.now();
+    _loop();
+  }
+
+  void _loop() async {
+    while (_running) {
+      await Future<void>.delayed(const Duration(milliseconds: 200));
+      onTick(DateTime.now().difference(_start!));
+    }
+  }
+
+  void stop() => _running = false;
+  void dispose() => _running = false;
+}
+
+// --- petite extension utilitaire pour empiler sous _ZenAppBar ---------------
+extension _WithBelow on Widget {
+  /// Permet d'écrire: Column(...).copyWithBelow(Expanded(child: ...))
+  Widget copyWithBelow(Widget below) => Column(children: [this, below]);
+}
+
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});

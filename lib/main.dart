@@ -3,17 +3,19 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'ui/splash_screen.dart';
-import '../services/pose_preloader.dart';
+import 'services/pose_preloader.dart';
+import 'screens/cardio_respi_page.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  // Préchargement MediaPipe (Web) — stub no-op côté mobile
   // ignore: unawaited_futures
   PosePreloader.instance.preload();
+
   runApp(const KaisenApp());
 }
 
@@ -30,7 +32,14 @@ class KaisenApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
         textTheme: GoogleFonts.interTextTheme(),
       ),
+      // 1) Écran de départ
       home: const SplashScreen(),
+
+      // 2) Routes nommées
+      routes: {
+        '/cardio': (_) => const CardioRespiPage(),
+        // tu pourras ajouter ici: '/exercice': (_) => const ExercicePage(), etc.
+      },
     );
   }
 }

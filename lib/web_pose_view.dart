@@ -25,7 +25,7 @@ class _WebPoseViewState extends State<WebPoseView> {
     super.initState();
 
     _iframe = html.IFrameElement()
-      ..src = 'pose_web.html'
+      ..src = Uri.base.resolve('pose_web.html').toString()
       ..style.border = '0'
       ..allow = 'camera; microphone'
       ..allowFullscreen = true;

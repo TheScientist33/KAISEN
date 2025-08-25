@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../pose_launcher.dart';
+import '../services/pose_preloader.dart';
 
 // ---------- Palette ----------
 class KzColors {

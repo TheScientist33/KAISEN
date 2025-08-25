@@ -10,7 +10,7 @@ class PosePreloader {
   Future<void> preload() async {
     if (_iframe != null) return;
     _iframe = html.IFrameElement()
-      ..src = html.Uri.base.resolve('pose_preload.html').toString()
+      ..src = Uri.base.resolve('pose_preload.html').toString()
       ..style.border = '0'
       ..style.width = '0'
       ..style.height = '0'
@@ -18,7 +18,6 @@ class PosePreloader {
       ..style.left = '-9999px'
       ..style.top = '-9999px'
       ..allow = 'camera; microphone';
-    html.document.body?.append(_iframe!);
   }
 
   Future<bool> requestCameraWarmup() async {

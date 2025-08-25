@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
-import 'ui/splash_screen.dart'; // 👈 notre splash zen
+import 'ui/splash_screen.dart';
 import '../services/pose_preloader.dart';
 
 Future<void> main() async {

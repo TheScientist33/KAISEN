@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../screens/camera_pose_page.dart';
+import '../screens/pose_page.dart'; // export conditionnel web/mobile
 
 
 /// ---------- Palette ----------
